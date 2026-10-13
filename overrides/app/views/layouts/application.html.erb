@@ -37,7 +37,7 @@
     <div class="max-w-6xl mx-auto px-4 md:px-2 mb-8">
       <%= yield %>
     </div>
-    <footer class="cosmind-attribution"><%= render 'shared/attribution' %></footer>
+    <% unless content_for?(:cosmind_attribution) %><footer class="cosmind-attribution"><%= render 'shared/attribution' %></footer><% end %>
     <%= render 'shared/body_scripts' %>
   </body>
 </html>

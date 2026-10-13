@@ -1,0 +1,21 @@
+# Cosmind Sign: DocuSeal's English strings that name DocuSeal where the Cosmind name belongs
+# (README.md). Rails loads config/locales in sorted order, so this file, named after i18n.yml,
+# replaces only these keys. en-US and en-GB copy en in DocuSeal's file, so they are set here too.
+# The attribution's own strings (powered_by, sent_using_...) are DocuSeal's and stay untouched.
+en: &cosmind
+  # The tour card on the dashboard of a new user.
+  welcome_to_docuseal: Welcome to Cosmind Sign
+  # The page a new user's invitation opens.
+  welcome_to_product_name: 'Welcome to Cosmind Sign'
+  # The invitation e-mail to a new user: its subject and its first sentence.
+  you_are_invited_to_product_name: You are invited to Cosmind Sign
+  you_have_been_invited_to_account_name_product_name_please_sign_up_using_the_link_below_: 'You have been invited to %{account_name} on Cosmind Sign. Please sign up using the link below:'
+  # Two tooltips in the account settings.
+  add_a_unique_signature_id_and_timestamp_to_each_signature_for_audit_and_traceability_purposes_along_with_the_timestamp_part_of_docuseals_21_cfr_part_11_compliance_settings: "Add a unique Signature ID and timestamp to each signature for audit and traceability purposes along with the timestamp. Part of the 21 CFR Part 11 compliance settings."
+  require_signer_to_provide_a_reason_for_signing_before_completing_their_signature_e_g_approvals_certifications_part_of_docuseals_21_cfr_part_11_compliance_settings: "Require signers to provide a reason for signing before completing their signature (e.g., approvals, certifications). Part of the 21 CFR Part 11 compliance settings."
+  # The MCP settings.
+  connect_to_docuseal_mcp: Connect to the MCP server
+
+en-US: *cosmind
+
+en-GB: *cosmind

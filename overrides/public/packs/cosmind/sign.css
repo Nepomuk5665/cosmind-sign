@@ -52,7 +52,43 @@ h1.cosmind-banner {
   font-size: clamp(1.75rem, 9vw, 3rem);
 }
 
-/* The attribution under every signed-in and sign-in page (layouts/application.html.erb). */
+/* The start page for a visitor who is not signed in (pages/landing.html.erb), and the page after
+   the first setup (newsletters/show.html.erb). */
+.cosmind-landing {
+  max-width: 32rem;
+  margin: 4rem auto 0;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.cosmind-landing-title {
+  margin: 1rem 0 0;
+  font-size: 2.25rem;
+  line-height: 1.2;
+}
+
+.cosmind-landing-text {
+  margin: 1rem 0 2rem;
+  font-size: 1.125rem;
+  color: #5d5d58;
+}
+
+.cosmind-landing-button {
+  min-width: 12rem;
+}
+
+.cosmind-nowrap {
+  white-space: nowrap;
+}
+
+.cosmind-landing-note {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: #5d5d58;
+}
+
+/* The attribution under every page of DocuSeal's application and plain layouts that does not show
+   it itself (layouts/application.html.erb, layouts/plain.html.erb). */
 .cosmind-attribution {
   margin: 2rem 0 1.5rem;
   color: #5d5d58;

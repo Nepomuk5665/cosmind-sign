@@ -6,7 +6,8 @@ service, with the Cosmind brand. Cosmind runs it for the contracts its clients s
 uses the service can get its source, as the licence asks (below).
 
 We changed no code. The image is DocuSeal's own image, and the build copies our files over it:
-view partials, icons and one stylesheet. Nothing is compiled or run in the build.
+view partials, icons, one stylesheet and a few English strings. Nothing is compiled or run in the
+build.
 
 ## Upstream
 
@@ -32,15 +33,29 @@ Everything is in `overrides/`, at the path it replaces in DocuSeal's image (`/ap
 | `app/views/shared/_title.html.erb` | The top bar: the mark and "COSMIND sign" |
 | `app/views/submit_form/_docuseal_logo.html.erb`, `app/views/start_form/_docuseal_logo.html.erb` | The same above the signing form and on its completed page; no link to the sign-in |
 | `app/views/layouts/_head_tags.html.erb`, `app/views/shared/_html_title.html.erb`, `app/views/shared/_meta.html.erb` | Page titles ("Cosmind Sign"), the description and link preview, and our stylesheet |
-| `app/views/layouts/application.html.erb` | DocuSeal's layout plus one footer line: the attribution (below) under the sign-in, setup and signed-in pages, where the top bar used to name DocuSeal |
-| `app/views/shared/_powered_by.html.erb` | DocuSeal's attribution, unchanged, and a "Source" link to this repository next to it |
-| `app/views/layouts/mailer.html.erb` | The e-mail layout: a header with "COSMIND sign" and our colours; DocuSeal's own footer line stays |
+| `app/views/layouts/application.html.erb`, `app/views/layouts/plain.html.erb` | DocuSeal's layouts plus one footer: the attribution (below), on every page that does not show it itself, where the top bar or the logo used to name DocuSeal |
+| `app/views/shared/_powered_by.html.erb` | DocuSeal's attribution, unchanged, and a "Source" link to this repository next to it; it marks the page, so the layouts' footer never shows it twice |
+| `app/views/submit_form/_submission_form.html.erb` | The signing form's script does not repeat the attribution after signing (DocuSeal's `data-attribution` switch); the line under the document stays |
+| `app/views/pages/landing.html.erb` | The start page before sign-in: "Cosmind Sign", one sentence for signers, a sign-in button for Cosmind staff |
+| `app/views/errors/404.html`, `422.html`, `500.html` | The error pages in the Cosmind look, with the attribution and no link to the staff-only start page |
+| `app/views/newsletters/show.html.erb` | After the first setup: a "Setup is done" page instead of DocuSeal's newsletter sign-up, which sent the address to docuseal.com |
+| `app/views/shared/_navbar.html.erb`, `app/views/shared/_navbar_buttons.html.erb`, `app/views/shared/_settings_nav.html.erb` | No GitHub stars, "Upgrade" button, Console or AI assistant links, no Plans, Console, SMS or SSO entries in the settings, and no DocuSeal support block (GitHub, Discord, support address, release notes) |
+| `app/views/sms_settings/_placeholder.html.erb`, `app/views/sso_settings/_placeholder.html.erb`, `app/views/notifications_settings/_reminder_placeholder.html.erb`, `app/views/personalization_settings/_logo_placeholder.html.erb`, `app/views/submissions/_bulk_send_placeholder.html.erb` | DocuSeal Pro's offers replaced by one plain sentence each |
+| `app/views/submissions/_send_sms_button.html.erb`, `app/views/templates_code_modal/_placeholder.html.erb`, `app/views/templates/_embedding.html.erb`, `app/views/esign_settings/_default_signature_row.html.erb`, `app/views/users/_role_select.html.erb` | No DocuSeal Pro buttons, notes or rows; the role select stays |
+| `app/views/templates/edit.html.erb` | The template builder without DocuSeal's logo (its `data-with-logo` switch) |
+| `app/views/templates_share_link_qr/_logo.html.erb` | The share link's QR sheet: our wordmark |
+| `app/views/layouts/mailer.html.erb`, `app/views/devise/mailer/reset_password_instructions.html.erb` | The e-mail layout: a header with "COSMIND sign" and our colours; DocuSeal's own footer line stays. The reset password e-mail is signed "Cosmind Sign" |
 | `app/views/pwa/manifest.json.erb` | The web app manifest's name and colours |
+| `config/locales/zz_cosmind.yml` | Seven English strings that named DocuSeal: the dashboard's welcome, the invitation of a new user (subject, text, page), two tooltips and the MCP settings' title. It loads after DocuSeal's `i18n.yml`, so only these keys change |
 | `public/favicon*`, `public/apple-*.png`, `public/preview.png` | Icons and the link preview image, rendered from `brand/*.svg` by `brand/render.sh` |
 | `public/packs/cosmind/sign.css` | Our stylesheet: the colours and font of Cosmind's other apps, set through DocuSeal's theme variables |
 
-The template builder, which only Cosmind's administrators see, keeps DocuSeal's logo: it is part of
-DocuSeal's compiled scripts, which we do not change.
+What still names DocuSeal, and why: the attribution and DocuSeal's footer line in e-mails (the
+licence); the name authenticator apps show for the two-factor code (DocuSeal's product name, which
+the attribution prints too); a few things only Cosmind's administrators see inside DocuSeal's compiled template builder
+(a locked Pro field with a pricing link); the link to DocuSeal's API reference in the API settings
+(its documentation); and what DocuSeal's code writes into signed documents (the audit trail's header,
+the signature reason, the PDF's creator, the name of the self-generated signing certificate).
 
 ## Licence
 
@@ -52,11 +67,11 @@ additional term (`LICENSE_ADDITIONAL_TERMS`, under section 7(b) of that licence)
 
 Our changes are licensed under the same terms. How we keep them:
 
-- **The attribution.** "Powered by DocuSeal - open source documents software", with its link, stays
-  on every page where DocuSeal shows it: the signing form, its completed page and the other pages a
-  signer can reach. It is also under every page that shows our top bar (the sign-in and setup pages
-  and the pages after sign-in), because the top bar no longer names DocuSeal. Our stylesheet hides
-  none of it. DocuSeal's footer line in its e-mails stays too.
+- **The attribution.** "Powered by DocuSeal - open source documents software", with its link, shows
+  exactly once on every page: where DocuSeal shows it (the signing form, its completed page and the
+  other pages a signer can reach), and under every other page of DocuSeal's layouts and its error
+  pages, because our top bar and logo no longer name DocuSeal. Our stylesheet hides none of it.
+  DocuSeal's footer line in its e-mails stays too.
 - **The source (section 13).** Next to the attribution, a "Source" link points to this repository.
 
 ## Build

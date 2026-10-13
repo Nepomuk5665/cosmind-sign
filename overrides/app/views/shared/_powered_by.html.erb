@@ -1,3 +1,4 @@
+<% content_for(:cosmind_attribution, 'shown') %>
 <div class="text-center px-2">
   <% if local_assigns[:with_counter] %>
     <% count = CompletedSubmitter.distinct.count(:submission_id) %>

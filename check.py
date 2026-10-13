@@ -9,10 +9,12 @@ from a directory holding them, and fails on:
 
 - a replaced file that DocuSeal changed or removed (port DocuSeal's change into the override, then
   record; the hint names the files to diff between the two versions);
-- a file we add that DocuSeal now ships itself;
+- a file we add that DocuSeal now ships itself, or a string our locale file sets that DocuSeal's
+  English strings no longer have;
 - DocuSeal's LICENSE or LICENSE_ADDITIONAL_TERMS changed (read them again before recording);
-- a page that no longer renders DocuSeal's attribution, or a layout that no longer renders the head
-  tags our stylesheet and titles come through;
+- a page that no longer renders DocuSeal's attribution, an attribution partial that no longer
+  renders the "Powered by" partial our Source link and the once-per-page rule live in, or a layout
+  that no longer renders the head tags our stylesheet and titles come through;
 - a partial an override renders that exists neither in DocuSeal nor among the overrides;
 - an image whose version (``/app/.version``) is not the recorded one, or a Dockerfile whose base
   digest is not the recorded one (nor, in our deployment repository, the pin in images.json).
@@ -44,8 +46,11 @@ DOCKERFILE = HERE / "Dockerfile"
 # In our deployment repository the pin lives two levels up; the public mirror has no such file.
 IMAGES_JSON = HERE.parent / "images.json"
 
-# Files we add, never DocuSeal's: everything under our own folder of /packs.
-ADDED_PREFIX = "public/packs/cosmind/"
+# Files we add, never DocuSeal's: everything under our own folder of /packs, and our locale file
+# (named to load after DocuSeal's i18n.yml, so its keys win).
+ADDED = ("public/packs/cosmind/", "config/locales/zz_cosmind.yml")
+LOCALE_FILE = "config/locales/zz_cosmind.yml"
+UPSTREAM_LOCALE = "config/locales/i18n.yml"
 LICENCE_FILES = ("LICENSE", "LICENSE_ADDITIONAL_TERMS")
 # DocuSeal's pages that must keep rendering its attribution (and with it our Source link): the
 # signing form, its completed and other end pages, and the pages after sending a copy.
@@ -61,6 +66,9 @@ ATTRIBUTION_PAGES = (
     "app/views/send_submission_email/success.html.erb",
 )
 ATTRIBUTION_RENDER = "render 'shared/attribution'"
+# DocuSeal's attribution partial renders "Powered by" through this one, which we replace.
+ATTRIBUTION_PARTIAL = "app/views/shared/_attribution.html.erb"
+POWERED_BY_RENDER = "render 'shared/powered_by'"
 # The layouts the signing form, its end pages and the drawing page on a phone use; each must render
 # the head tags, which carry our title, icons and stylesheet.
 HEAD_TAGS_LAYOUTS = (
@@ -75,6 +83,24 @@ RENDER_RE = re.compile(r"render(?:\(|\s+)(?:partial:\s*)?'([a-z_]+/[a-z_]+)'")
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def is_added(name: str) -> bool:
+    return name.startswith(ADDED)
+
+
+def locale_keys(text: str, locale: str = "en") -> set[str]:
+    """The keys of one locale's top level, read line by line (stdlib has no YAML parser): the lines
+    indented by two spaces between `<locale>:` and the next top-level line."""
+    keys, inside = set(), False
+    for line in text.splitlines():
+        if line and not line.startswith((" ", "#")):
+            inside = line.split(":")[0] == locale
+            continue
+        match = re.match(r"^  ([a-z0-9_]+):", line)
+        if inside and match:
+            keys.add(match.group(1))
+    return keys
 
 
 def override_files() -> list[str]:
@@ -108,8 +134,10 @@ def static_problems(recorded: dict) -> list[str]:
             )
     replaced = set(recorded.get("replaced", {}))
     for name in override_files():
-        if name not in replaced and not name.startswith(ADDED_PREFIX):
-            problems.append(f"overrides/{name}: neither a recorded replacement nor under {ADDED_PREFIX}")
+        if name not in replaced and not is_added(name):
+            problems.append(
+                f"overrides/{name}: neither a recorded replacement nor one of our files ({', '.join(ADDED)})"
+            )
     for name in sorted(replaced - set(override_files())):
         problems.append(f"upstream.json records {name}, but no override replaces it")
     return problems
@@ -131,7 +159,7 @@ def upstream_problems(recorded: dict, tree: Path) -> list[str]:
             changed.append(name)
             problems.append(f"{name}: DocuSeal changed it; port the change into overrides/{name}")
     for name in override_files():
-        if name.startswith(ADDED_PREFIX) and (tree / name).exists():
+        if is_added(name) and (tree / name).exists():
             problems.append(f"{name}: DocuSeal ships this file now; ours would replace it")
     for name in LICENCE_FILES:
         path = tree / name
@@ -141,6 +169,15 @@ def upstream_problems(recorded: dict, tree: Path) -> list[str]:
         path = tree / name
         if not path.is_file() or ATTRIBUTION_RENDER not in path.read_text():
             problems.append(f"{name}: no longer renders the attribution ({ATTRIBUTION_RENDER})")
+    path = tree / ATTRIBUTION_PARTIAL
+    if not path.is_file() or POWERED_BY_RENDER not in path.read_text():
+        problems.append(f"{ATTRIBUTION_PARTIAL}: no longer renders {POWERED_BY_RENDER}")
+    ours = OVERRIDES / LOCALE_FILE
+    upstream_locale = tree / UPSTREAM_LOCALE
+    if ours.is_file():
+        theirs = locale_keys(upstream_locale.read_text()) if upstream_locale.is_file() else set()
+        for key in sorted(locale_keys(ours.read_text()) - theirs):
+            problems.append(f"{LOCALE_FILE}: DocuSeal's English strings no longer have {key}")
     for name in HEAD_TAGS_LAYOUTS:
         path = tree / name
         if not path.is_file() or HEAD_TAGS_RENDER not in path.read_text():
@@ -169,9 +206,11 @@ def extract(image: str, into: Path) -> Path:
     ).stdout.strip()
     try:
         (into / "app").mkdir(parents=True)
+        (into / "config").mkdir(parents=True)
         for source, target in (
             ("/app/app/views", into / "app" / "views"),
             ("/app/public", into / "public"),
+            ("/app/config/locales", into / "config" / "locales"),
             ("/app/.version", into / ".version"),
             ("/app/LICENSE", into / "LICENSE"),
             ("/app/LICENSE_ADDITIONAL_TERMS", into / "LICENSE_ADDITIONAL_TERMS"),
@@ -188,7 +227,7 @@ def record(tree: Path) -> dict:
         raise SystemExit("the tree has no .version, so the version cannot be recorded")
     replaced = {}
     for name in override_files():
-        if name.startswith(ADDED_PREFIX):
+        if is_added(name):
             continue
         if not (tree / name).is_file():
             raise SystemExit(f"{name}: DocuSeal has no such file; remove the override")
