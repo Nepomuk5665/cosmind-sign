@@ -3,9 +3,9 @@
 
 An override replaces one of DocuSeal's files as a whole, so it is only right while DocuSeal's own
 file is the one it was made from. ``upstream.json`` records, for the pinned version and digest, the
-SHA-256 of every DocuSeal file an override replaces and of DocuSeal's licence files. This script
-reads DocuSeal's files out of the base image (``docker create`` and ``docker cp``, nothing runs) or
-from a directory holding them, and fails on:
+SHA-256 of every DocuSeal file an override replaces, of the files our initializer overrides parts
+of, and of DocuSeal's licence files. This script reads DocuSeal's files out of the base image
+(``docker create`` and ``docker cp``, nothing runs) or from a directory holding them, and fails on:
 
 - a replaced file that DocuSeal changed or removed (port DocuSeal's change into the override, then
   record; the hint names the files to diff between the two versions);
@@ -16,6 +16,10 @@ from a directory holding them, and fails on:
   renders the "Powered by" partial our Source link and the once-per-page rule live in, or a layout
   that no longer renders the head tags our stylesheet and titles come through;
 - a partial an override renders that exists neither in DocuSeal nor among the overrides;
+- a DocuSeal file our initializer (``config/initializers/cosmind_sign.rb``) overrides parts of that
+  DocuSeal changed (its hash is recorded too), or one that no longer has what the initializer
+  replaces: the reason "Signed with DocuSeal.com", ``add_logo``, the creator string, the HexaPDF
+  version whose ``Document#write`` it wraps;
 - an image whose version (``/app/.version``) is not the recorded one, or a Dockerfile whose base
   digest is not the recorded one (nor, in our deployment repository, the pin in images.json).
 
@@ -46,9 +50,9 @@ DOCKERFILE = HERE / "Dockerfile"
 # In our deployment repository the pin lives two levels up; the public mirror has no such file.
 IMAGES_JSON = HERE.parent / "images.json"
 
-# Files we add, never DocuSeal's: everything under our own folder of /packs, and our locale file
-# (named to load after DocuSeal's i18n.yml, so its keys win).
-ADDED = ("public/packs/cosmind/", "config/locales/zz_cosmind.yml")
+# Files we add, never DocuSeal's: everything under our own folder of /packs, our locale file (named
+# to load after DocuSeal's i18n.yml, so its keys win) and our one initializer.
+ADDED = ("public/packs/cosmind/", "config/locales/zz_cosmind.yml", "config/initializers/cosmind_sign.rb")
 LOCALE_FILE = "config/locales/zz_cosmind.yml"
 UPSTREAM_LOCALE = "config/locales/i18n.yml"
 LICENCE_FILES = ("LICENSE", "LICENSE_ADDITIONAL_TERMS")
@@ -77,6 +81,27 @@ HEAD_TAGS_LAYOUTS = (
     "app/views/submit_form_draw_signature/show.html.erb",
 )
 HEAD_TAGS_RENDER = "render 'layouts/head_tags'"
+# DocuSeal's files the initializer overrides parts of, each with what it must still contain. Their
+# hashes are recorded as well: any change to them is a reason to look at the initializer again.
+CREATOR = '"#{Docuseal.product_name} (#{Docuseal::PRODUCT_URL})"'
+PATCHED = {
+    "lib/submissions/generate_result_attachments.rb": (
+        "SIGN_REASON = 'Signed with DocuSeal.com'",
+        "format(SIGN_REASON, name:)",
+        CREATOR,
+    ),
+    "lib/submissions/generate_audit_trail.rb": (
+        "def sign_reason\n      'Signed with DocuSeal.com'",
+        "def add_logo(column, _submission = nil)",
+        "add_logo(column, submission)",
+        "column.image(PdfIcons.logo_io",
+        "FONT_NAME =",
+        CREATOR,
+    ),
+    "lib/submissions/generate_combined_attachment.rb": (CREATOR,),
+    # The initializer wraps HexaPDF::Document#write, which Document#sign reaches too.
+    "Gemfile.lock": ("    hexapdf (1.7.0)\n",),
+}
 DIGEST_RE = re.compile(r"sha256:[0-9a-f]{64}")
 RENDER_RE = re.compile(r"render(?:\(|\s+)(?:partial:\s*)?'([a-z_]+/[a-z_]+)'")
 
@@ -140,6 +165,8 @@ def static_problems(recorded: dict) -> list[str]:
             )
     for name in sorted(replaced - set(override_files())):
         problems.append(f"upstream.json records {name}, but no override replaces it")
+    if set(recorded.get("patched", {})) != set(PATCHED):
+        problems.append("upstream.json's patched files are not the ones check.py lists (PATCHED): record again")
     return problems
 
 
@@ -178,6 +205,17 @@ def upstream_problems(recorded: dict, tree: Path) -> list[str]:
         theirs = locale_keys(upstream_locale.read_text()) if upstream_locale.is_file() else set()
         for key in sorted(locale_keys(ours.read_text()) - theirs):
             problems.append(f"{LOCALE_FILE}: DocuSeal's English strings no longer have {key}")
+    for name, digest in sorted(recorded.get("patched", {}).items()):
+        path = tree / name
+        if not path.is_file() or sha256(path) != digest:
+            changed.append(name)
+            problems.append(f"{name}: DocuSeal changed it; check config/initializers/cosmind_sign.rb against it")
+    for name, markers in PATCHED.items():
+        path = tree / name
+        text = path.read_text() if path.is_file() else ""
+        for marker in markers:
+            if marker not in text:
+                problems.append(f"{name}: no longer has {marker!r}, which cosmind_sign.rb relies on")
     for name in HEAD_TAGS_LAYOUTS:
         path = tree / name
         if not path.is_file() or HEAD_TAGS_RENDER not in path.read_text():
@@ -207,10 +245,14 @@ def extract(image: str, into: Path) -> Path:
     try:
         (into / "app").mkdir(parents=True)
         (into / "config").mkdir(parents=True)
+        (into / "lib").mkdir(parents=True)
         for source, target in (
             ("/app/app/views", into / "app" / "views"),
             ("/app/public", into / "public"),
             ("/app/config/locales", into / "config" / "locales"),
+            ("/app/lib/submissions", into / "lib" / "submissions"),
+            ("/app/lib/pdf_icons", into / "lib" / "pdf_icons"),
+            ("/app/Gemfile.lock", into / "Gemfile.lock"),
             ("/app/.version", into / ".version"),
             ("/app/LICENSE", into / "LICENSE"),
             ("/app/LICENSE_ADDITIONAL_TERMS", into / "LICENSE_ADDITIONAL_TERMS"),
@@ -237,6 +279,7 @@ def record(tree: Path) -> dict:
         "digest": dockerfile_digest(),
         "replaced": replaced,
         "licence": {name: sha256(tree / name) for name in LICENCE_FILES},
+        "patched": {name: sha256(tree / name) for name in PATCHED},
     }
 
 

@@ -4,6 +4,12 @@
     "LICENSE": "76a97c878c9c7a8321bb395c2b44d3fe2f8d81314d219b20138ed0e2dddd5182",
     "LICENSE_ADDITIONAL_TERMS": "67e378d842d69f209fc9f4061419b0f93025eea850142869c2399cb05c4d3565"
   },
+  "patched": {
+    "Gemfile.lock": "835106eb852973fa94027b3d3ba6094cb9b698ce18631f9ca021b8334e1dfbdd",
+    "lib/submissions/generate_audit_trail.rb": "50ceab17cc33b9c39dc33d0d81e68aa0def441503b5185836f88aef0017bac7a",
+    "lib/submissions/generate_combined_attachment.rb": "b27342f33bdc4aa31cc162d4f8fde571a6bdc04996ce84ea8354a19b773cfbe8",
+    "lib/submissions/generate_result_attachments.rb": "fa115eebae4716c00e9691d451f7f51069ff60878f6702f800addbcb319cd32e"
+  },
   "replaced": {
     "app/views/devise/mailer/reset_password_instructions.html.erb": "53e67964f8ef3a379014c7d33fdb17b12a29aa42509031a1b386c9f973a344f3",
     "app/views/errors/404.html": "a36a031e79f4f9827eadc0bdd40046114f99528c254da2d634d9cf11f984519d",
@@ -39,6 +45,8 @@
     "app/views/templates_code_modal/_placeholder.html.erb": "d092403aae68ce917b6dcdccbec5c04a8830acdac4c886c49cf1ee8f40fa83f5",
     "app/views/templates_share_link_qr/_logo.html.erb": "0dd71cfb190b4138a27c74bf5d7aadb2a333a53cca72d9dedd68f9aef1979a19",
     "app/views/users/_role_select.html.erb": "f77e69ff7db3af9ec2d692e755e9fb2c6d081eac4a4a8daed97d1c340a464fde",
+    "lib/pdf_icons/logo.png": "a6a312178e270905cc162f1167812229fd8eb25cfd5efcc4194428b685dfd6c6",
+    "lib/pdf_icons/stamp-logo.png": "b792ef3ce0412628bbfb61f295bfffa2a7e94ed5fce231f973d8311a7b020f9b",
     "public/apple-icon-180x180.png": "9b9507aaefcbe06b58c464724d418940c610df480e75b4cc1a58d1939d5d2142",
     "public/apple-touch-icon-precomposed.png": "9b9507aaefcbe06b58c464724d418940c610df480e75b4cc1a58d1939d5d2142",
     "public/apple-touch-icon.png": "9b9507aaefcbe06b58c464724d418940c610df480e75b4cc1a58d1939d5d2142",
