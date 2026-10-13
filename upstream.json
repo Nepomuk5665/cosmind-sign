@@ -1,0 +1,30 @@
+{
+  "digest": "sha256:f8af4c00b05421fb425a46b6587d696f7756b02a9fe4ecdd1d825ad00cbb2ac6",
+  "licence": {
+    "LICENSE": "76a97c878c9c7a8321bb395c2b44d3fe2f8d81314d219b20138ed0e2dddd5182",
+    "LICENSE_ADDITIONAL_TERMS": "67e378d842d69f209fc9f4061419b0f93025eea850142869c2399cb05c4d3565"
+  },
+  "replaced": {
+    "app/views/layouts/_head_tags.html.erb": "e3fca028d42361dd0baec08da94459307543755bc19c5a1c0f750cd9c1b518b2",
+    "app/views/layouts/application.html.erb": "aa87d1a2299e48604ee090732999084759dc730e750347ae1cc176b0f72f79e1",
+    "app/views/layouts/mailer.html.erb": "6fb95ecda8fe591c4a403a314bf9aacd93a4b61c2b67369dbd3e699a1e213c9d",
+    "app/views/pwa/manifest.json.erb": "1f8b43ade6a5e1899636aeb6b016b79ce0a8ed75120c3abc470aade1914a6aa6",
+    "app/views/shared/_html_title.html.erb": "3ebf94706ebb2a2be2c0c1c4c0aefdf87ed6291f9a20ef569ddb586196b04e91",
+    "app/views/shared/_logo.html.erb": "229c127883506874ab512fc492232701da995c89606a6cb036059623121f5db0",
+    "app/views/shared/_meta.html.erb": "da22c7f10e49c5214d5a0b8a2038dbc90b87cabec73f043866c5b044b2a76d03",
+    "app/views/shared/_powered_by.html.erb": "78a026a74c84b82039ab8acd3c55c61df8f4f915ab1caa05e3f81c442f67c378",
+    "app/views/shared/_title.html.erb": "78b3355543c0087f891b787cec97c78380eb1fd927477819a67b10769868e961",
+    "app/views/start_form/_docuseal_logo.html.erb": "8f2700919dd738a4f99bc735939e96724cb04ff8f4bde68ebb1ce3ef237ac728",
+    "app/views/submit_form/_docuseal_logo.html.erb": "9e8c2aacba1c3b3d8d3eaea84ad4d7cbad3ebb820c35b1105c9454dc501a78ec",
+    "public/apple-icon-180x180.png": "9b9507aaefcbe06b58c464724d418940c610df480e75b4cc1a58d1939d5d2142",
+    "public/apple-touch-icon-precomposed.png": "9b9507aaefcbe06b58c464724d418940c610df480e75b4cc1a58d1939d5d2142",
+    "public/apple-touch-icon.png": "9b9507aaefcbe06b58c464724d418940c610df480e75b4cc1a58d1939d5d2142",
+    "public/favicon-16x16.png": "e3709e079dd27f79ff3649219f2cff039c3d51f44f86b331e0d261b62351818a",
+    "public/favicon-32x32.png": "e71649e7cf1675cfa95396ec7a0b72f21493df2952326b8ec6b9dd6a07795d8b",
+    "public/favicon-96x96.png": "36ac4f03007c3424c6553e346a7ca2ce840fa7e63e01caca6c13578a14d445d9",
+    "public/favicon.ico": "c4b1a8912d007d21acc3bf6c0f2b53f6f5293d7772f87c20cdd5d898c61de756",
+    "public/favicon.svg": "be96e61de34fd921b1471fa34f27069e782f75f4be775575fac192fbd22d69ba",
+    "public/preview.png": "1029a3694ac091fe04832d54e8f801a9822a6514c63c1100d64399e940bec74c"
+  },
+  "version": "3.3.0"
+}

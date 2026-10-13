@@ -1,0 +1,60 @@
+/*
+ * Cosmind Sign: the Cosmind look over DocuSeal's own stylesheets (README.md).
+ *
+ * Loaded by layouts/_head_tags.html.erb before DocuSeal's packs, so every rule here is one
+ * step more specific than the rule it changes (`:root[data-theme]` over daisyUI's `:root`,
+ * `html[data-theme]` over Tailwind's `html`). The colours are the sales and admin apps'
+ * (--bg #f6f5f2, --ink #1d1d1b, --muted #5d5d58, --line #dcdad3, --accent #1f4b99), as daisyUI
+ * 3 reads them: hue, saturation and lightness without hsl().
+ *
+ * Nothing here hides DocuSeal's attribution ("Powered by DocuSeal") or makes it hard to read:
+ * its licence's additional term requires it in every interactive page.
+ */
+
+:root[data-theme] {
+  --b1: 45 18.2% 95.7%;       /* #f6f5f2, the page */
+  --b2: 45 17.4% 91%;         /* #eceae4 */
+  --b3: 46.7 11.4% 84.5%;     /* #dcdad3, lines */
+  --bc: 60 3.6% 11%;          /* #1d1d1b, text */
+  --n: 218.4 66.3% 36.1%;     /* #1f4b99, the accent: DocuSeal's main buttons are btn-neutral */
+  --nf: 218.6 67.1% 28.6%;    /* #183b7a, the accent on hover */
+  --nc: 0 0% 100%;            /* white on the accent */
+  --p: 218.6 35% 92.2%;       /* #e4e9f2, a light accent for btn-primary and badges */
+  --pf: 217.8 37% 85.7%;      /* #cdd7e8 */
+  --pc: 60 3.6% 11%;          /* #1d1d1b */
+  --rounded-btn: 0.5rem;      /* buttons and inputs, 8px as in the sales app */
+  --rounded-box: 0.75rem;     /* cards, 12px */
+  /* --btn-text-case stays DocuSeal's uppercase: some of its labels are lower case ("next"). */
+}
+
+html[data-theme] {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* The wordmark: "COSMIND" with the product in muted text, as in the sales and admin apps. */
+.cosmind-wordmark {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1d1d1b;
+}
+
+.cosmind-wordmark-product {
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  color: #5d5d58;
+}
+
+/* The completed page's banner stays on one line on a phone: "COSMIND sign" is longer than "DocuSeal". */
+h1.cosmind-banner {
+  white-space: nowrap;
+  font-size: clamp(1.75rem, 9vw, 3rem);
+}
+
+/* The attribution under every signed-in and sign-in page (layouts/application.html.erb). */
+.cosmind-attribution {
+  margin: 2rem 0 1.5rem;
+  color: #5d5d58;
+  font-size: 0.875rem;
+}

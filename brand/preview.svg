@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" fill="none">
+  <rect width="800" height="800" fill="#f6f5f2"/>
+  <g transform="translate(252 155) scale(4)">
+    <circle cx="36" cy="36" r="9" fill="#1f4b99"/>
+    <ellipse cx="36" cy="36" rx="31" ry="13" stroke="#1f4b99" stroke-width="2.5" transform="rotate(-24 36 36)"/>
+    <circle cx="63" cy="24" r="4" fill="#1f4b99"/>
+  </g>
+  <text x="400" y="500" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="88" font-weight="700" letter-spacing="7" fill="#1d1d1b">COSMIND</text>
+  <text x="400" y="572" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="48" font-weight="400" fill="#5d5d58">sign</text>
+</svg>

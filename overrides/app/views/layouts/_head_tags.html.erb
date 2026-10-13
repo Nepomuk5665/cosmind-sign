@@ -1,0 +1,9 @@
+<title>
+  <%= turbo_native_app? ? content_for(:native_title) : (content_for(:html_title) || 'Cosmind Sign') %>
+</title>
+<%= render 'shared/meta' %>
+<link rel="stylesheet" href="/packs/cosmind/sign.css?v=<%= Digest::SHA256.file(Rails.public_path.join('packs/cosmind/sign.css')).hexdigest.first(12) %>" media="all">
+<% if turbo_native_app? %>
+  <meta name="turbo-cache-control" content="no-preview">
+  <%= render 'layouts/native_styles' %>
+<% end %>

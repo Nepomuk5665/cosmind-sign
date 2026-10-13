@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- start text/html --><style>a { color: #1f4b99; }</style><!-- end text/html -->
+  </head>
+  <body dir="<%= TextUtils.rtl?(yield) ? 'rtl' : 'auto' %>" style="margin: 0; padding: 0; background-color: #f6f5f2;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f6f5f2;">
+      <tr>
+        <td align="center" style="padding: 24px 12px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background-color: #ffffff; border: 1px solid #dcdad3; border-radius: 12px;">
+            <!-- start text/html -->
+            <tr>
+              <td style="padding: 16px 28px; border-bottom: 1px solid #dcdad3; font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.5; color: #1d1d1b;">
+                <span style="font-weight: 700; letter-spacing: 0.04em;">COSMIND</span> <span style="color: #5d5d58;">sign</span>
+              </td>
+            </tr>
+            <!-- end text/html -->
+            <tr>
+              <td style="padding: 8px 28px 20px; font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.5; color: #1d1d1b;">
+                <%= yield %>
+                <div style="color: #5d5d58; font-size: 13px;"><%= render partial: 'shared/mailer_attribution' %></div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
